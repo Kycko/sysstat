@@ -229,11 +229,11 @@ __printf_funct_t print_json_restart(int *tab, int action, char *cur_date, char *
 			printf("\n");
 			sep = FALSE;
 		}
-		if (!DISPLAY_NDJSON(flags)) {
-			xprintf(NO_CR, --(*tab), "]");
+		if (DISPLAY_NDJSON(flags)) {
+			printf("]}\n");
 		}
 		else {
-			printf("]}\n");
+			xprintf(NO_CR, --(*tab), "]");
 		}
 	}
 }
@@ -484,11 +484,11 @@ __printf_funct_t print_json_comment(int *tab, int action, char *cur_date, char *
 			printf("\n");
 			sep = FALSE;
 		}
-		if (!DISPLAY_NDJSON(flags)) {
-			xprintf(NO_CR, --(*tab), "]");
+		if (DISPLAY_NDJSON(flags)) {
+			printf("]}\n");
 		}
 		else {
-			printf("]}\n");
+			xprintf(NO_CR, --(*tab), "]");
 		}
 	}
 }
@@ -612,13 +612,12 @@ __printf_funct_t print_json_statistics(int *tab, int action, struct activity *ac
 
 	if (action & F_BEGIN) {
 		printf("%s", DISPLAY_NDJSON(flags) ? "{" : ",\n");
-		xprintf(bh | NO_SPC, (*tab)++, "\"statistics\": %s",
-			DISPLAY_NDJSON(flags) ? "" : "[");
+		xprintf(bh | NO_SPC, (*tab)++, "\"statistics\": [");
 	}
 	if (action & F_MAIN) {
 		if (sep) {
 			if (DISPLAY_NDJSON(flags)) {
-				printf("}}\n{\"statistics\": ");
+				printf("}]}\n{\"statistics\": [");
 			}
 			else {
 				xprintf(0, --(*tab), "},");
@@ -633,7 +632,7 @@ __printf_funct_t print_json_statistics(int *tab, int action, struct activity *ac
 			sep = FALSE;
 		}
 		if (DISPLAY_NDJSON(flags)) {
-			printf("}\n");
+			printf("]}\n");
 		}
 		else {
 			xprintf(NO_CR, --(*tab), "]");
