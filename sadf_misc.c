@@ -475,7 +475,7 @@ __printf_funct_t print_json_comment(int *tab, int action, char *cur_date, char *
 			PRINT_LOCAL_TIME(flags) ? my_tz
 						: (PRINT_TRUE_TIME(flags) ? file_hdr->sa_tzname
 									  : "UTC"),
-			comment);
+			escape_json_char(comment));
 		xprintf(DISPLAY_NDJSON(flags) ? bh | NO_SPC : NO_CR, --(*tab), "}");
 		sep = TRUE;
 	}

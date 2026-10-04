@@ -801,19 +801,62 @@ char *device_name(char *name)
  */
 char *escape_bs_char(const char str[])
 {
-	static char buffer[MAX_NAME_LEN];
+	static char buffer[MAX_NAME_LEN * 2];
 	int i = 0, j = 0;
 
 	if (str != NULL) {
-		while (str[i] != '\0' && j < MAX_NAME_LEN - 1) {
+		while (str[i] != '\0' && j < (MAX_NAME_LEN * 2) - 1) {
 			if (str[i] == '\\') {
-				if (j < MAX_NAME_LEN - 2) {
+				if (j < (MAX_NAME_LEN * 2) - 2) {
 					buffer[j++] = '\\';
-					buffer[j++] = '\\';
-				} else {
+				}
+				else {
 					break;
 				}
-			} else {
+			}
+			buffer[j++] = str[i++];
+		}
+	}
+
+	buffer[j] = '\0';
+	return buffer;
+}
+
+/*
+ * **************************************************************************
+ * Escape characters which cannot appear as is in a JSON string ('"', '\'
+ * and control characters).
+ *
+ * IN:
+ * @str		String which may contain characters to escape.
+ *
+ * RETURNS:
+ * String where characters have been escaped.
+ ***************************************************************************
+ */
+char *escape_json_char(const char str[])
+{
+	static char buffer[MAX_NAME_LEN * 2];
+	int i = 0, j = 0;
+
+	if (str != NULL) {
+		while (str[i] != '\0' && j < (MAX_NAME_LEN * 2) - 1) {
+			if ((str[i] == '\\') || (str[i] == '"')) {
+				if (j < (MAX_NAME_LEN * 2) - 2) {
+					buffer[j++] = '\\';
+					buffer[j++] = str[i];
+				}
+				else {
+					break;
+				}
+			}
+			else if (str[i] < 0x20) {
+				if (j < (MAX_NAME_LEN * 2) - 6) {
+					sprintf(buffer + j, "\\u%04x", str[i]);
+					j += 6;
+				}
+			}
+			else {
 				buffer[j++] = str[i];
 			}
 			i++;
