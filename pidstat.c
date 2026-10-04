@@ -420,13 +420,13 @@ void print_json_comm(struct st_pid *plist)
 		/* This is a TID */
 		printf("\"leader\": \"");
 		if (plist->tgid) {
-			/* Print thead group leader command then task one */
-			printf("%s", plist->tgid->comm);
+			/* Print thread group leader command then task one */
+			printf("%s", escape_json_char(plist->tgid->comm));
 		} /* else this is a PID (TGID) */
 
 		printf("\", ");
 	}
-	printf("\"cmd\": \"%s\"}", p);
+	printf("\"cmd\": \"%s\"}", escape_json_char(p));
 }
 
 /*
@@ -1348,7 +1348,7 @@ void print_json_line_id(int tab, struct st_pid *plist)
 	printf("\": \"");
 
 	if (DISPLAY_USERNAME(pidflag) && ((pwdent = __getpwuid(plist->uid)) != NULL)) {
-		printf("%s", pwdent->pw_name);
+		printf("%s", escape_json_char(pwdent->pw_name));
 	}
 	else {
 		printf("%d", plist->uid);
